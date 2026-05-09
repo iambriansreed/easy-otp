@@ -1,17 +1,37 @@
 {
-    "name": "easy-otp",
+    "name": "@iambrian/easy-otp",
     "version": "1.0.0",
     "main": "dist/app.js",
     "scripts": {
         "dev": "npx tsx dev.ts",
         "start": "rm -rf dist && cp -r assets dist && tsc && electron .",
+        "pack": "rm -rf dist && cp -r assets dist && tsc && electron-builder --dir",
+        "dist": "rm -rf dist && cp -r assets dist && tsc && electron-builder",
+        "make-icons": "npx tsx scripts/make-icons.ts",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
-    "author": "",
+    "author": "Brian Reed",
     "license": "ISC",
-    "description": "",
+    "description": "macOS menu bar app for managing TOTP accounts",
+    "build": {
+        "appId": "com.iambrian.easy-otp",
+        "productName": "Easy OTP",
+        "mac": {
+            "category": "public.app-category.utilities",
+            "icon": "build/icon.icns"
+        },
+        "files": [
+            "dist/**/*",
+            "assets/**/*"
+        ]
+    },
+    "engines": {
+        "node": ">=22"
+    },
     "devDependencies": {
-        "electron": "^40.6.1"
+        "electron": "^40.6.1",
+        "electron-builder": "^26.8.1",
+        "sharp": "^0.34.5"
     },
     "dependencies": {
         "jssha": "^3.3.1"

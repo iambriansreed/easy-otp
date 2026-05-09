@@ -1,7 +1,7 @@
 import { app, Tray, Menu, nativeImage, dialog, safeStorage, Notification } from 'electron';
 import path from 'node:path';
 import fs from 'node:fs';
-import { getTimeBasedOTP } from './otp-service';
+import { getTimeBasedOTP } from './otp';
 import { execSync } from 'node:child_process';
 
 type Account = {
@@ -15,33 +15,48 @@ const DATA_PATH = path.join(app.getPath('userData'), 'accounts.enc');
 let tray: Tray | null = null;
 let lastUpdated = 0;
 let lastClickedAccount: Account | null = null;
+const selectedForRemoval = new Set<string>();
+
+function accountKey(a: Account) {
+    return a.issuer + a.account;
+}
 
 const onAccountClick = (a: Account) => () => {
-    console.log(`Clicked on account: ${accountLabel(a)}`);
-    // tray?.popUpContextMenu(contextMenu());
     lastClickedAccount = a;
     setTimeout(() => {
         lastClickedAccount = null;
-        tray?.popUpContextMenu(contextMenu());
+        tray?.popUpContextMenu(mainMenu());
     }, 60 * 1000);
 
-    // In onAccountClick:
     new Notification({
         title: 'OTP Copied',
-        body: `Copied code for `,
+        body: `Copied code for ${accountLabel(a)}`,
         silent: true,
     }).show();
 
-    // copy to clipboard
     execSync(`printf '%s' "${getTimeBasedOTP(a.secret)}" | pbcopy`);
+};
+
+const onAccountRemove = (a: Account) => () => {
+    const key = accountKey(a);
+    if (selectedForRemoval.has(key)) selectedForRemoval.delete(key);
+    else selectedForRemoval.add(key);
+    tray?.setContextMenu(removeAccountsMenu());
+    setTimeout(() => tray?.popUpContextMenu(removeAccountsMenu()), 300);
 };
 
 let accounts = readData() || [];
 
-console.log(accounts);
+function decode(s: string) {
+    try {
+        return decodeURIComponent(s);
+    } catch {
+        return s;
+    }
+}
 
 function accountLabel(a: Account) {
-    return decodeURIComponent(`${a.issuer}: ${a.account}`);
+    return `${decode(a.issuer)}: ${decode(a.account)}`;
 }
 
 // prevent multiple instances of the app
@@ -58,8 +73,11 @@ function readData() {
         try {
             const decryptedData = safeStorage.decryptString(encryptedData);
             const parsedData = JSON.parse(decryptedData) as Account[];
-            console.log(parsedData);
-            return parsedData;
+            return parsedData.map((a) => ({
+                ...a,
+                issuer: decode(a.issuer),
+                account: decode(a.account),
+            }));
         } catch (decryptErr) {
             console.error('Failed to decrypt data, deleting corrupted file:', decryptErr);
             fs.unlinkSync(DATA_PATH);
@@ -75,56 +93,8 @@ function writeData(data: any) {
     fs.writeFileSync(DATA_PATH, safeStorage.encryptString(JSON.stringify(data)), 'utf-8');
 }
 
-type role =
-    | 'undo'
-    | 'redo'
-    | 'cut'
-    | 'copy'
-    | 'paste'
-    | 'pasteAndMatchStyle'
-    | 'delete'
-    | 'selectAll'
-    | 'reload'
-    | 'forceReload'
-    | 'toggleDevTools'
-    | 'resetZoom'
-    | 'zoomIn'
-    | 'zoomOut'
-    | 'toggleSpellChecker'
-    | 'togglefullscreen'
-    | 'window'
-    | 'minimize'
-    | 'close'
-    | 'help'
-    | 'about'
-    | 'services'
-    | 'hide'
-    | 'hideOthers'
-    | 'unhide'
-    | 'quit'
-    | 'startSpeaking'
-    | 'stopSpeaking'
-    | 'zoom'
-    | 'front'
-    | 'appMenu'
-    | 'fileMenu'
-    | 'editMenu'
-    | 'viewMenu'
-    | 'shareMenu'
-    | 'recentDocuments'
-    | 'toggleTabBar'
-    | 'selectNextTab'
-    | 'selectPreviousTab'
-    | 'showAllTabs'
-    | 'mergeAllWindows'
-    | 'clearRecentDocuments'
-    | 'moveTabToNewWindow'
-    | 'windowMenu';
-
-let contextMenu: () => Menu = () => {
+let mainMenu: () => Menu = () => {
     const updatedLessThanOneMinuteAgo = Date.now() - lastUpdated < 60 * 1000;
-
-    console.log({ lastClickedAccount });
 
     return Menu.buildFromTemplate(
         [
@@ -163,6 +133,13 @@ let contextMenu: () => Menu = () => {
             }),
             { type: 'separator' },
             {
+                label: 'Remove account...',
+                click: () => {
+                    tray?.setContextMenu(removeAccountsMenu());
+                    setTimeout(() => tray?.popUpContextMenu(removeAccountsMenu()), 300);
+                },
+            },
+            {
                 label: 'Update accounts...',
                 click: updateAccounts,
                 icon: nativeImage
@@ -192,6 +169,69 @@ let contextMenu: () => Menu = () => {
     );
 };
 
+const removeAccountsMenu = (): Menu => {
+    const count = selectedForRemoval.size;
+    return Menu.buildFromTemplate([
+        { label: 'Select accounts to remove:', enabled: false },
+        { type: 'separator' },
+        ...accounts.map((a) => ({
+            label: accountLabel(a),
+            type: 'checkbox' as const,
+            checked: selectedForRemoval.has(accountKey(a)),
+            click: onAccountRemove(a),
+        })),
+        { type: 'separator' },
+        {
+            label: count > 0 ? `Remove ${count} selected...` : 'Remove selected...',
+            enabled: count > 0,
+            click: () => {
+                tray?.setContextMenu(removeAccountConfirmMenu());
+                setTimeout(() => tray?.popUpContextMenu(removeAccountConfirmMenu()), 300);
+            },
+        },
+        {
+            label: 'Cancel',
+            click: () => {
+                selectedForRemoval.clear();
+                tray?.setContextMenu(mainMenu());
+                setTimeout(() => tray?.popUpContextMenu(mainMenu()), 300);
+            },
+        },
+    ]);
+};
+
+const removeAccountConfirmMenu = (): Menu => {
+    const toRemove = accounts.filter((a) => selectedForRemoval.has(accountKey(a)));
+    return Menu.buildFromTemplate([
+        { label: `Remove ${toRemove.length} account${toRemove.length !== 1 ? 's' : ''}?`, enabled: false },
+        { type: 'separator' },
+        ...toRemove.map((a) => ({ label: `  ${accountLabel(a)}`, enabled: false })),
+        { type: 'separator' },
+        {
+            label: 'Confirm',
+            click: () => {
+                accounts = accounts.filter((a) => !selectedForRemoval.has(accountKey(a)));
+                selectedForRemoval.clear();
+                writeData(accounts);
+                tray?.setContextMenu(mainMenu());
+                new Notification({
+                    title: `${toRemove.length} Account${toRemove.length !== 1 ? 's' : ''} Removed`,
+                    body: toRemove.map(accountLabel).join(', '),
+                    silent: true,
+                }).show();
+            },
+        },
+        {
+            label: 'Cancel',
+            click: () => {
+                selectedForRemoval.clear();
+                tray?.setContextMenu(mainMenu());
+                setTimeout(() => tray?.popUpContextMenu(mainMenu()), 300);
+            },
+        },
+    ]);
+};
+
 app.whenReady().then(() => {
     tray = new Tray(
         nativeImage
@@ -200,10 +240,10 @@ app.whenReady().then(() => {
     );
 
     // Set the context menu for the tray icon
-    tray.setContextMenu(contextMenu());
+    tray.setContextMenu(mainMenu());
 
     // Set a tooltip
-    tray.setToolTip('My menu bar app');
+    tray.setToolTip('Easy OTP - Click to view accounts');
 
     // Handle clicks to show/hide a window (optional, can be done with the menu items instead)
     tray.on('click', () => {});
@@ -215,8 +255,6 @@ app.on('window-all-closed', () => {
         app.quit();
     }
 });
-
-console.log('App is ready. Tray icon should be visible.');
 
 function updateAccounts() {
     // Bring app to foreground so the dialog is visible (macOS tray-only apps need this)
@@ -272,9 +310,20 @@ function updateAccounts() {
                     }
                 }
 
-                // merge the new data with the existing data, overwriting any existing accounts with the same name
+                const decodedAccounts: Account[] = newAccounts.map((a: Account) => ({
+                    ...a,
+                    issuer: decode(a.issuer),
+                    account: decode(a.account),
+                }));
+
+                const existingKeys = new Set(accounts.map((a) => a.account + a.issuer));
+                const added = decodedAccounts.filter((a: Account) => !existingKeys.has(a.account + a.issuer));
+                const updated = decodedAccounts.filter((a: Account) =>
+                    existingKeys.has(a.account + a.issuer),
+                );
+
                 accounts = accounts
-                    .concat(newAccounts)
+                    .concat(decodedAccounts)
                     .filter(
                         (account, index, self) =>
                             index ===
@@ -282,8 +331,17 @@ function updateAccounts() {
                     );
 
                 writeData(accounts);
-                tray?.popUpContextMenu(contextMenu());
+                tray?.popUpContextMenu(mainMenu());
                 lastUpdated = Date.now();
+
+                const parts = [];
+                if (added.length) parts.push(`${added.length} added`);
+                if (updated.length) parts.push(`${updated.length} already existed`);
+                new Notification({
+                    title: 'Accounts Updated',
+                    body: parts.join(', ') || 'No changes',
+                    silent: true,
+                }).show();
             } catch (err) {
                 dialog.showErrorBox(
                     'Error',
