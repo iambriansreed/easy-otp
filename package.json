@@ -1,6 +1,6 @@
 {
     "name": "@iambrian/easy-otp",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "main": "dist/app.js",
     "scripts": {
         "dev": "npx tsx scripts/dev.ts",
