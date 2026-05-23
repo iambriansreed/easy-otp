@@ -20,6 +20,8 @@ jobs:
 
       - run: npm ci
 
+      - run: npm run make-icons
+
       - run: npm run dist
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: false
