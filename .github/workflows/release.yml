@@ -1,33 +1,37 @@
 name: Release
 
 on:
-  push:
-    tags:
-      - 'v*'
-  workflow_dispatch:
+    push:
+        tags:
+            - 'v*'
+    workflow_dispatch:
+
+permissions:
+    contents: write
 
 jobs:
-  build:
-    runs-on: macos-latest
+    build:
+        runs-on: macos-latest
 
-    steps:
-      - uses: actions/checkout@v4
+        steps:
+            - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: lts/*
-          cache: 'npm'
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: lts/*
+                  cache: 'npm'
 
-      - run: npm ci
+            - run: npm ci
 
-      - run: npm run make-icons
+            - run: npm run make-icons
 
-      - run: npm run dist
-        env:
-          CSC_IDENTITY_AUTO_DISCOVERY: false
+            - run: npm run dist
+              env:
+                  CSC_IDENTITY_AUTO_DISCOVERY: false
 
-      - uses: softprops/action-gh-release@v2
-        with:
-          files: dist/*.dmg
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            - uses: softprops/action-gh-release@v2
+              if: startsWith(github.ref, 'refs/tags/')
+              with:
+                  files: dist/*.dmg
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
