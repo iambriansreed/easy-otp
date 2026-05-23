@@ -2,7 +2,17 @@
 
 A macOS menu bar app for managing TOTP (Time-based One-Time Password) accounts. Click an account to copy its current OTP code to the clipboard.
 
-## Prerequisites
+## Download
+
+![Latest Release](https://img.shields.io/github/v/release/iambriansreed/easy-otp?label=latest)
+
+[Download Easy OTP.dmg](https://github.com/iambriansreed/easy-otp/releases/latest)
+
+Requires macOS. Since the app is unsigned, right-click → Open on first launch to bypass Gatekeeper.
+
+## Development
+
+### Prerequisites
 
 - macOS
 - Node.js 22+
@@ -48,23 +58,17 @@ Accounts are stored encrypted on disk using Electron's `safeStorage`. You manage
 
 ### Adding accounts
 
-From the menu bar → **Update accounts...** → select a JSON file with this shape:
+From the menu bar → **Easy OTP Settings...** → Add Account. Two options:
 
-```json
-[
-  {
-    "issuer": "GitHub",
-    "account": "you@example.com",
-    "secret": "YOUR_BASE32_SECRET"
-  }
-]
-```
+- **From URL** — paste an `otpauth://totp/...` URI (e.g. from a QR code scanner)
+- **Manual** — enter Issuer, Account, and Secret directly
+- **Import File** — select a `.txt` file with one `otpauth://` URL per line
 
-Importing merges with existing accounts. Accounts with the same `issuer` + `account` combination are kept as-is.
+Importing merges with existing accounts. Accounts with the same `issuer` + `account` combination are updated in place.
 
-### Removing accounts
+### Editing & removing accounts
 
-From the menu bar → **Remove account...** → select an account → **Confirm**.
+Open **Easy OTP Settings...** → click **Edit** on any account to update its fields, or **×** to delete it. Drag the handle on the left to reorder.
 
 ### Copying an OTP
 
@@ -72,9 +76,9 @@ Click any account in the menu bar to copy its current 6-digit TOTP code to the c
 
 ## Scripts
 
-| Script | Description |
-|---|---|
-| `npm start` | Run in development mode |
-| `npm run pack` | Build a local `.app` for testing |
-| `npm run dist` | Build a distributable `.dmg` |
+| Script               | Description                                                      |
+| -------------------- | ---------------------------------------------------------------- |
+| `npm start`          | Run in development mode                                          |
+| `npm run pack`       | Build a local `.app` for testing                                 |
+| `npm run dist`       | Build a distributable `.dmg`                                     |
 | `npm run make-icons` | _(Optional)_ Regenerate `build/icon.icns` from `assets/icon.svg` |

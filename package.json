@@ -3,10 +3,10 @@
     "version": "1.0.0",
     "main": "dist/app.js",
     "scripts": {
-        "dev": "npx tsx dev.ts",
-        "start": "rm -rf dist && cp -r assets dist && tsc && electron .",
-        "pack": "rm -rf dist && cp -r assets dist && tsc && electron-builder --dir",
-        "dist": "rm -rf dist && cp -r assets dist && tsc && electron-builder",
+        "dev": "npx tsx scripts/dev.ts",
+        "start": "rm -rf dist && cp -r assets dist && tsc && cp src/settings.html dist/ && electron .",
+        "pack": "rm -rf dist && cp -r assets dist && tsc && cp src/settings.html dist/ && electron-builder --dir",
+        "dist": "rm -rf dist && cp -r assets dist && tsc && cp src/settings.html dist/ && electron-builder",
         "make-icons": "npx tsx scripts/make-icons.ts",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
@@ -18,7 +18,8 @@
         "productName": "Easy OTP",
         "mac": {
             "category": "public.app-category.utilities",
-            "icon": "build/icon.icns"
+            "icon": "build/icon.icns",
+            "target": "dmg"
         },
         "files": [
             "dist/**/*",
