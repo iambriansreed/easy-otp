@@ -1,4 +1,4 @@
 export default {
     port: 4159,
-    base: '/easy-otp/',
+    base: '/',
 } satisfies Skrapa.Config;
