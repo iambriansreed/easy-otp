@@ -1,0 +1,14 @@
+{
+    "name": "easy-otp-web",
+    "private": true,
+    "scripts": {
+        "dev": "skrapa dev",
+        "build": "skrapa build"
+    },
+    "devDependencies": {
+        "skrapa": "0.7.1"
+    },
+    "engines": {
+        "node": ">=24"
+    }
+}

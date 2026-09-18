@@ -1,12 +1,14 @@
 {
     "name": "@iambrian/easy-otp",
-    "version": "1.0.2",
+    "version": "1.1.0",
     "main": "dist/app.js",
     "scripts": {
+        "init": "bash scripts/init.sh",
+        "demo": "npx tsx scripts/demo.ts",
         "dev": "npx tsx scripts/dev.ts",
-        "start": "rm -rf dist && cp -r assets dist && tsc && cp src/settings.html dist/ && electron .",
-        "pack": "rm -rf dist && cp -r assets dist && tsc && cp src/settings.html dist/ && electron-builder --dir",
-        "build": "rm -rf dist && cp -r assets dist && tsc && cp src/settings.html dist/ && electron-builder --publish never",
+        "start": "rm -rf dist && cp -r assets dist && tsc && cp src/*.html dist/ && electron .",
+        "pack": "rm -rf dist && cp -r assets dist && tsc && cp src/*.html dist/ && electron-builder --dir",
+        "build": "rm -rf dist && cp -r assets dist && tsc && cp src/*.html dist/ && electron-builder --publish never",
         "release": "npm version patch && git push --follow-tags",
         "make-icons": "npx tsx scripts/make-icons.ts",
         "test": "echo \"Error: no test specified\" && exit 1"
@@ -20,7 +22,9 @@
         "mac": {
             "category": "public.app-category.utilities",
             "icon": "build/icon.icns",
-            "target": "dmg"
+            "target": "dmg",
+            "identity": "-",
+            "hardenedRuntime": false
         },
         "files": [
             "dist/**/*",
@@ -31,7 +35,7 @@
         "node": ">=22"
     },
     "devDependencies": {
-        "electron": "^40.6.1",
+        "electron": "^44.4.1",
         "electron-builder": "^26.8.1",
         "sharp": "^0.34.5",
         "typescript": "^6.0.3"

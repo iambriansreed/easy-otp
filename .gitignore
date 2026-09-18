@@ -1,5 +1,8 @@
 node_modules
 dist
 build
-.DS_Store
+.*
 local-otp*
+!.github
+!.vscode
+!.claude

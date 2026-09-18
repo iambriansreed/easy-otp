@@ -1,0 +1,11 @@
+otpauth://totp/Stripe:jane%40example.com?secret=mfcnsnw5roujnqbnruqjzwew&issuer=Stripe
+otpauth://totp/GitHub:janesmith?secret=QRYGLXGA4CJFYBD23DBGS3FOTK65UZDU&issuer=GitHub
+otpauth://totp/Google:jane%40example.com?secret=6VOWV7Y37CDLJDMI&issuer=Google
+otpauth://totp/Amazon%20Web%20Services:user%40123456789012?secret=JQQFDLSXO7QILRXXHULPMS3C3N6ZBKIQ4342PZBOYSG4Y2W2MN2EFWMAN4PMB2SN&issuer=Amazon%20Web%20Services
+otpauth://totp/Cloudflare:jane%40example.com?secret=GKFWFLW7ZESXEHDERXMW3FOPHHUOR3Y5&issuer=Cloudflare
+otpauth://totp/npm:janesmith?secret=HAZDKNLBGA4TGM3F&issuer=npm
+otpauth://totp/1Password:jane%40example.com?secret=3OU4SVOUZ7ASGRTRP7V7PJHHBVIEUW5E&issuer=1Password
+otpauth://totp/Slack:jane%40example.com?secret=5NAP6PT3OEA7TSXDP5J32AGHIWK6STDP&issuer=Slack
+otpauth://totp/Microsoft:jane%40example.com?secret=LCQQ3XWDMQ27COJC&issuer=Microsoft
+otpauth://totp/LastPass:jane%40example.com?secret=BHMTYXJDMILCULAL&issuer=LastPass
+otpauth://totp/Okta:jane%40example.com?secret=leds5hhepomag5b2&issuer=Okta

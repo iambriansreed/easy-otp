@@ -1,0 +1,514 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+img,
+svg {
+    display: block;
+    max-width: 100%;
+}
+
+a {
+    color: inherit;
+}
+
+:root {
+    --bg: #0f0f11;
+    --surface: #1a1a1f;
+    --border: #2a2a32;
+    --text: #e8e8f0;
+    --muted: #9a9aab;
+    /* macOS system blue (dark appearance) */
+    --accent: #0a84ff;
+    --accent-hover: #409cff;
+}
+
+body {
+    font-family:
+        system-ui,
+        -apple-system,
+        sans-serif;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--text);
+    background: var(--bg);
+}
+
+h1,
+h2,
+h3 {
+    letter-spacing: -0.02em;
+}
+
+/* Nav */
+
+.nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 1.25rem 1.5rem;
+}
+
+.nav .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.nav nav {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.nav nav > a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.nav nav > a:hover {
+    color: var(--text);
+}
+
+.github-link {
+    display: flex;
+    opacity: 0.7;
+    transition: opacity 0.15s;
+}
+
+.github-link:hover {
+    opacity: 1;
+}
+
+.github-link img {
+    filter: invert(1);
+}
+
+/* Sections */
+
+section,
+footer {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 4.5rem 1.5rem;
+}
+
+.hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    text-align: center;
+    padding-top: 5rem;
+    padding-bottom: 4.5rem;
+}
+
+/* The logo is a white glyph on transparency; masking it lets it take the exact accent color */
+.hero .logo {
+    width: 96px;
+    height: 96px;
+    background-color: var(--accent);
+    -webkit-mask: url(logo.png) center / contain no-repeat;
+    mask: url(logo.png) center / contain no-repeat;
+}
+
+h1 {
+    font-size: 2.75rem;
+    font-weight: 700;
+}
+
+.tagline {
+    max-width: 34rem;
+    font-size: 1.15rem;
+    color: var(--muted);
+}
+
+.cta-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-top: 0.25rem;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    border: 1px solid transparent;
+    transition:
+        transform 0.1s,
+        border-color 0.15s,
+        background 0.15s;
+}
+
+.btn:active {
+    transform: scale(0.98);
+}
+
+.btn-primary {
+    background: var(--accent);
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background: var(--accent-hover);
+}
+
+.btn-secondary {
+    background: var(--surface);
+    color: var(--text);
+    border-color: var(--border);
+}
+
+.btn-secondary:hover {
+    border-color: var(--accent);
+}
+
+.badge {
+    height: 20px;
+}
+
+.screenshot {
+    /* Keeps the aspect ratio when max-width shrinks an image that has width/height attributes */
+    height: auto;
+    margin-top: 0.5rem;
+    /* Window captures carry their own rounded, transparent corners, so the shadow follows the alpha */
+    filter: drop-shadow(0 16px 32px rgb(0 0 0 / 0.55));
+}
+
+.screenshot-hero {
+    max-width: min(100%, 354px);
+    margin-top: 2rem;
+}
+
+.prose .screenshot {
+    margin: 1.25rem 0 1.75rem;
+}
+
+.features h2,
+.usage h2,
+.download h2,
+.build-locally h2 {
+    text-align: center;
+    font-size: 1.75rem;
+    margin-bottom: 3rem;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.75rem;
+}
+
+.feature {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.75rem 1.5rem;
+}
+
+.feature h3 {
+    font-size: 1.05rem;
+    margin-bottom: 0.6rem;
+}
+
+.feature p {
+    color: var(--muted);
+    font-size: 0.92rem;
+}
+
+.feature a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+.feature a:hover {
+    text-decoration: underline;
+}
+
+/* Usage guide: prose beside the settings screenshot, stacked on narrow screens */
+
+.usage-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 340px);
+    gap: 4rem;
+    align-items: start;
+}
+
+.usage-layout .prose {
+    max-width: none;
+}
+
+.usage .prose h3 {
+    margin: 2.5rem 0 0.6rem;
+}
+
+.usage .prose h3:first-child {
+    margin-top: 0;
+}
+
+.usage .prose p {
+    margin-bottom: 1rem;
+}
+
+.usage .prose ul {
+    gap: 0.6rem;
+    margin: 0.75rem 0 1.25rem;
+}
+
+.usage-layout > .screenshot {
+    position: sticky;
+    top: 2rem;
+    margin-top: 0;
+}
+
+.download,
+.build-locally {
+    text-align: center;
+}
+
+.lede {
+    color: var(--muted);
+    margin-bottom: 1.75rem;
+}
+
+.download .prose,
+.build-locally .code-block {
+    text-align: left;
+    max-width: 42rem;
+    margin: 2.5rem auto 0;
+}
+
+.download .prose ol {
+    gap: 1rem;
+}
+
+.build-locally .sub {
+    margin-top: 1.25rem;
+}
+
+/* Less breathing room on phones, where the same padding would eat the screen */
+@media (max-width: 760px) {
+    section {
+        padding-top: 3rem;
+        padding-bottom: 3rem;
+    }
+
+    .hero {
+        padding-top: 3rem;
+        padding-bottom: 3rem;
+    }
+
+    .usage-layout {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 2.5rem;
+    }
+
+    .usage-layout > .screenshot {
+        position: static;
+        max-width: min(100%, 420px);
+        margin: 0 auto;
+    }
+}
+
+/* Prose (long-form content) */
+
+.prose {
+    max-width: 42rem;
+    text-align: left;
+    line-height: 1.7;
+}
+
+.prose h2 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin: 1.75rem 0 0.5rem;
+}
+
+.prose h2:first-child,
+.prose h3:first-child {
+    margin-top: 0;
+}
+
+.prose h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 1.25rem 0 0.4rem;
+}
+
+.prose p {
+    color: var(--muted);
+    margin-bottom: 0.75rem;
+}
+
+.prose ul,
+.prose ol {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin: 0.5rem 0 1rem;
+    padding-left: 1.25rem;
+}
+
+.prose li {
+    color: var(--muted);
+}
+
+.prose li .code-block {
+    margin: 0.5rem 0;
+}
+
+.prose code {
+    color: var(--text);
+}
+
+.prose strong {
+    color: var(--text);
+}
+
+kbd {
+    font-family: inherit;
+    font-size: 0.8em;
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-bottom-width: 2px;
+    border-radius: 4px;
+    padding: 0.05rem 0.35rem;
+    white-space: nowrap;
+}
+
+/* Code blocks */
+
+.code-block {
+    position: relative;
+}
+
+.code-block pre {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem 3.5rem 1rem 1.25rem;
+    overflow-x: auto;
+}
+
+.code-block code {
+    color: var(--text);
+    font-weight: 400;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.copy-btn {
+    position: absolute;
+    top: 0.6rem;
+    right: 0.6rem;
+    padding: 0.3rem 0.65rem;
+    font-size: 0.75rem;
+    border-radius: 6px;
+}
+
+/* Table */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0.5rem 0 1.5rem;
+    font-size: 0.9rem;
+}
+
+th,
+td {
+    text-align: left;
+    padding: 0.55rem 0.75rem;
+    border-bottom: 1px solid var(--border);
+}
+
+th {
+    color: var(--muted);
+    font-weight: 600;
+}
+
+td {
+    color: var(--muted);
+}
+
+/* Shared bits */
+
+.center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    text-align: center;
+    padding: 2rem 1.5rem 4rem;
+    max-width: 960px;
+    margin: 0 auto;
+}
+
+button {
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: border-color 0.15s;
+}
+
+button:hover {
+    border-color: var(--accent);
+}
+
+code {
+    font-family: ui-monospace, monospace;
+    font-size: 0.85em;
+}
+
+.sub {
+    font-size: 0.85rem;
+    color: var(--muted);
+}
+
+.sub a,
+.back {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+.sub a:hover,
+.back:hover {
+    text-decoration: underline;
+}
+
+footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.85rem;
+    padding-top: 2rem;
+    padding-bottom: 4rem;
+}
+
+footer a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}

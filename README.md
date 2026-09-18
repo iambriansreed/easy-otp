@@ -4,9 +4,17 @@ A macOS menu bar app for managing TOTP (Time-based One-Time Password) accounts.
 
 Click an account to copy its current OTP code to the clipboard.
 
-![menu bar screenshot](image.png)
+Accounts can carry an optional icon — an emoji you pick, or a favicon looked up for you.
+When you add an account without setting an emoji, Easy OTP guesses the issuer's domain
+(appending `.com` when the issuer isn't already a domain) and asks DuckDuckGo's icon
+service for it, falling back to Google's only when DuckDuckGo has nothing. Only the
+guessed domain name is sent, never the account or secret. Use **Find Missing Icons** in
+Settings to fill in accounts you added earlier, or **Find Favicon** on a single account to
+retry after correcting its issuer.
 
-![edit accounts screenshot](image-1.png)
+![menu bar screenshot](README/image.png)
+
+![edit accounts screenshot](README/image-1.png)
 
 ## Download
 
@@ -34,6 +42,7 @@ If that doesn't work (macOS 15+):
 
 ```sh
 npm install
+npm run make-icons
 npm run build
 ```
 
@@ -49,15 +58,13 @@ npm install
 
 ## Icon
 
-A default `build/icon.icns` is included — no action needed to get started.
-
-If you want to use your own icon, replace `assets/icon.svg` and run:
+`build/` isn't committed, so `npm run make-icons` must run at least once before
+`npm run pack` or `npm run build` — it generates `build/icon.icns` from `assets/icon.svg`
+(requires macOS and `npm install`). Replace `assets/icon.svg` first to use your own icon.
 
 ```sh
 npm run make-icons
 ```
-
-This regenerates `build/icon.icns` from your SVG (requires macOS and `npm install`).
 
 ## Development
 
@@ -96,7 +103,7 @@ Open **Easy OTP Settings...** → click **Edit** on any account to update its fi
 
 ### Copying an OTP
 
-Click any account in the menu bar to copy its current 6-digit TOTP code to the clipboard. A notification will confirm the copy.
+Click any account in the menu bar to copy its current 6-digit TOTP code to the clipboard. The menu will show a confirmation before closing.
 
 ## Scripts
 
