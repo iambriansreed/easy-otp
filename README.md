@@ -1,3 +1,6 @@
+> [!WARNING]
+> **This project is archived.** It's been replaced by [Menu OTP](https://github.com/iambriansreed/menu-otp), a native macOS version. New features and fixes land there.
+
 # Easy OTP
 
 A macOS menu bar app for managing TOTP (Time-based One-Time Password) accounts.
